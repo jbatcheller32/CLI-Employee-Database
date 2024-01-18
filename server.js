@@ -27,8 +27,8 @@ function startEmployeeTracker() {
             type: 'list',
             name: 'options',
             message: 'What would you like to do?',
-            choices: ['View all departments', 'View all roles', 'View all employees', 'Add department', 'Add a role',
-                'Add an employee', 'Update an employee role',]
+            choices: ['View all departments', 'View all roles', 'View all employees', 'Add an employee', 'Add department', 'Add a role',
+                'Update an employee role',]
         })
         .then(handleAction);
 }
@@ -38,8 +38,10 @@ const optionsMap = {
     'View all departments': viewDepartments,
     'View all roles': viewRoles,
     'View all employees': viewEmployees,
-    'Add employee': addEmployee,
-    //'Update employee role': updateEmployeeRole,
+    'Add an employee': addEmployee,
+    'Add department': addDepartment,
+    'Add a role': addRole,
+    'Update an employee role': updateEmployeeRole
 
 };
 
@@ -55,8 +57,6 @@ function handleAction(answer) {
 }
 
 
-
-
 //function to view departments
 
 function viewDepartments() {
@@ -64,7 +64,7 @@ function viewDepartments() {
         if (err) throw err;
         console.table(results);
         startEmployeeTracker();
-       
+
     });
 }
 
@@ -75,7 +75,7 @@ function viewRoles() {
         if (err) throw err;
         console.table(results);
         startEmployeeTracker();
-       
+
     });
 }
 
@@ -86,7 +86,7 @@ function viewEmployees() {
         if (err) throw err;
         console.table(results);
         startEmployeeTracker();
-        
+
     });
 }
 
@@ -105,36 +105,170 @@ function addEmployee() {
                 message: 'Enter employee last name:',
             },
             {
-                type: 'input',
+                type: 'list',
                 name: 'role',
                 message: 'Enter employee role:',
+                choices: ['Billing Support', 'Accountant', 'Sales Manager', 'Sales Rep',
+                    'Junior Software Engineer', 'Software Engineer', 'Lead Software Engineer', 'Senior Software Engineer',
+                    'Data Engineer', 'Data Maanger', 'Marketing Manager', 'Marketing Coordinator', 'Customer Service Rep',
+                    'Technical Support', 'Customer Success Manager']
             },
+
+            {
+                type: 'list',
+                name: 'manager',
+                message: 'Who is the employees manager?',
+                choices: ['James Batcheller', 'Jessica Sherwood', 'Benjamin Sakas', 'Corey Petersen']
+            }
         ])
         .then((answers) => {
             db.query(
-                'INSERT INTO employee SET ?',
+                `INSERT INTO employee SET ?`,
                 {
                     first_name: answers.firstName,
                     last_name: answers.lastName,
-                    role: answers.role,
+                    role_id: answers.role_id,
+                    manager_id: answers.manager_id
                 },
                 (err) => {
                     if (err) throw err;
                     console.log('Employee added successfully!');
                     startEmployeeTracker();
-                   
+
                 }
             );
         });
 }
 
+
+//Function to add a department
+function addDepartment() {
+    inquirer
+        .prompt([
+
+            {
+                type: 'input',
+                name: 'addDepartment',
+                message: 'Enter new department',
+            },
+
+        ])
+        .then((answers) => {
+            db.query(
+                `INSERT INTO department SET ?`,
+                {
+                    name: answers.addDepartment
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('Department added successfully!');
+                    startEmployeeTracker();
+                }
+            );
+        });
+}
+
+
+//Function for adding a new role
+
+function addRole() {
+    inquirer
+        .prompt([
+
+            {
+                type: 'input',
+                name: 'addRole',
+                message: 'Enter new role',
+            },
+
+            {
+                type: 'input',
+                name: 'addSalary',
+                message: 'Enter role salary',
+            },
+
+            {
+                type: 'list',
+                name: 'addDepartmentId',
+                message: 'Enter new role department',
+                choices: ['Accounting', 'Sales', 'Engineering', 'Marketing', 'Customer Service']
+            }
+        ])
+        .then((answers) => {
+            db.query(
+                `INSERT INTO roles SET ?`,
+                {
+                    title: answers.addRole,
+                    salary: answers.addSalary,
+                    department_id: answers.addDepartment
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('New role added successfully!');
+                    startEmployeeTracker();
+                }
+            );
+        });
+}
+
+
 // Function to update an employee's role
-//function updateEmployeeRole() {
-    // Implement code to update employee role
-    // You can use a similar inquirer prompt to get employee information and new role
-    // Update the MySQL database accordingly
-  //  startEmployeeTracker();
-//}
+
+function updateEmployeeRole() {
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                message: 'Choose employee',
+                name: 'employeeList',
+                choices: ['James Batcheller', 'Jessica Sherwood', 'Benjamin Sakas', 'Garrett Soares',
+                    'Mike Penhale', 'Erica Voulle', 'Corey Petersen', 'Ashley Owens', 'Saint Navarez',
+                    'Shane Oneil', 'Cory Kennedy', 'Paul Rodriguez', 'Dylan Jaeb', 'Chris Cole', 'Frank Reynolds',
+                    'Ishod Wair']
+            },
+
+            {
+                type: 'list',
+                message: 'Update employee role',
+                name: 'updatedRole',
+                choices: ['Billing Support', 'Accountant', 'Sales Manager', 'Sales Rep',
+                'Junior Software Engineer', 'Software Engineer', 'Lead Software Engineer', 'Senior Software Engineer',
+                'Data Engineer', 'Data Maanger', 'Marketing Manager', 'Marketing Coordinator', 'Customer Service Rep',
+                'Technical Support', 'Customer Success Manager']
+            },
+
+            {
+                type: 'list',
+                message: 'Who is their manager?',
+                name: 'managers',
+                choices: ['James Batcheller', 'Jessica Sherwood', 'Benjamin Sakas', 'Corey Petersen']
+
+            }
+
+        ])
+        .then((answers) => {
+            db.query(
+                `INSERT INTO employee SET ?`,
+                {
+                    first_name: answers.employeeList,
+                    last_name: answers.employeeList,
+                    role_id: answers.role_id,
+                    manager_id: answers.manager_id
+
+                },
+                
+                (err) => {
+                    if (err) throw err;
+                    console.log('Employee role updated successfully!');
+                    startEmployeeTracker();
+                }
+
+            );
+        });
+
+
+};
+
 
 
 
