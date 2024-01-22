@@ -28,7 +28,7 @@ function startEmployeeTracker() {
             name: 'options',
             message: 'What would you like to do?',
             choices: ['View all departments', 'View all roles', 'View all employees', 'Add an employee', 'Add department', 'Add a role',
-                'Update an employee role',]
+                'Update an employee role', 'Quit']
         })
         .then(handleAction);
 }
@@ -41,7 +41,8 @@ const optionsMap = {
     'Add an employee': addEmployee,
     'Add department': addDepartment,
     'Add a role': addRole,
-    'Update an employee role': updateEmployeeRole
+    'Update an employee role': updateEmployeeRole, 
+    'Quit': quit,
 
 };
 
@@ -267,6 +268,11 @@ function updateEmployeeRole() {
         });
 
 
+};
+
+
+function quit() {
+    db.end();
 };
 
 
