@@ -12,6 +12,11 @@ I would like to add some more functionality like deleting employees, departments
 
 # links
 
+https://github.com/jbatcheller32/CLI-Employee-Database
+
+https://drive.google.com/file/d/1rUp6rQQo08yidK_ZsRf9U8ppxuY6AlR8/view
+
+
 
 
 
